@@ -29,20 +29,11 @@ p <- MulticoreParam(workers = 40, progressbar = T)
 # saveRDS(gp5d_meth_comb_smooth, "data/bsmooth/GP5d_WT_inh_CpG_bsmoothed.rds")
 gp5d_meth_comb_smooth <- readRDS("data/bsmooth/GP5d_WT_inh_CpG_bsmoothed.rds")
 
-# testasdasd
-#asdasd
 ```
 
 ```{r import_data}
 ltr12c_loci <- read_tsv("data/LTR12C/LTR12C_DNMT_HDAC_Up_bothstrand_GP5d.bed", col_names = c("seqnames", "start", "end", "name", "width", "strand"))
 ltr12c_tbx <- paste0(ltr12c_loci$seqnames, ":", ltr12c_loci$start, "-", ltr12c_loci$end)
-
-bedmethyl_col_names <- c("seqnames", "start", "end", "base", "score", "strand", "start_pos", "end_pos", "color", "n_valid_cov", "frac_mod", "n_mod", "n_canonical", "n_other_mod", "n_del", "n_fail", "n_diff", "n_nocall")
-
-GP5d_inh <- tibble(tabix(ltr12c_tbx, "data/Nanopore/GP5d_DNMTi_HDACi/methylation/GP5d_DNMTi_HDACi_bedMethyl.bed.gz")) %>%
-  rename_with(~bedmethyl_col_names)
-
-gcg_pos <- read_tsv("data/Nanopore/GP5d_DNMTi_HDACi/methylation/gcg_motifs.bed", col_names = bedmethyl_col_names[1:6])
 
 getMeth(gp5d_meth_comb_smooth, regions = , type = "smooth")
 ```
