@@ -220,6 +220,7 @@ tabix_mbed <- function(querypath, dbpath = NULL, by = c("read", "call"), extcol 
 
 # Adapted from: https://github.com/timplab/nanoNOMe/blob/master/analysis/bulk_analysis/200629_gm12878_metaplots.Rmd
 makeMethPlot <- function(methylation, peaks, extension = NULL, win = 50) {
+  
   if (is.null(extension)) {
     coords <-
       methylation[overlapsAny(methylation, peaks), ]

@@ -1,14 +1,12 @@
 ---
-title: "R Notebook"
+title: "Patel et al. 2024 revision, Nanopore analysis"
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
-
-```{r utils}
+Read packages and methylation utilities:  
+```{r utils, message = F, warning = F}
 source("R/methylation_R_utils.R")
+source("R/style.R")
 
 library(tidyverse)
 library(bsseq)
@@ -18,8 +16,9 @@ library(BiocParallel)
 p <- MulticoreParam(workers = 40, progressbar = T)
 ```
 
-#### Read
-```{r}
+
+Read the BSmoothed data in for GP5d WT and DNMTi+HDACi:  
+```{r import data, message = F, warning = F}
 
 # gp5d_meth <- read.bismark("/data/kzkarttu/nanopore/GP5D/methylation/methylation_calls.GP5D.raw.cpg.mfreq.txt.gz")
 # gp5d_inh_meth <- read.modkit("/data/kzkarttu/projects/Patel_2024_revision/data/Nanopore/GP5d_DNMTi_HDACi/methylation/GP5d_DNMTi_HDACi_bedMethyl_no_GCG.bed.gz")
@@ -27,24 +26,48 @@ p <- MulticoreParam(workers = 40, progressbar = T)
 
 # gp5d_meth_comb_smooth <- BSmooth(gp5d_meth_comb, BPPARAM = p)
 # saveRDS(gp5d_meth_comb_smooth, "data/bsmooth/GP5d_WT_inh_CpG_bsmoothed.rds")
+
 gp5d_meth_comb_smooth <- readRDS("data/bsmooth/GP5d_WT_inh_CpG_bsmoothed.rds")
-
-```
-
-```{r import_data}
 ltr12c_loci <- read_tsv("data/LTR12C/LTR12C_DNMT_HDAC_Up_bothstrand_GP5d.bed", col_names = c("seqnames", "start", "end", "name", "width", "strand"))
-ltr12c_tbx <- paste0(ltr12c_loci$seqnames, ":", ltr12c_loci$start, "-", ltr12c_loci$end)
+```
 
-getMeth(gp5d_meth_comb_smooth, regions = , type = "smooth")
+Tabulate methylation per each LTR12C locus in GP5d WT and GP5d DNMTi+HDACi
 
-#äkdaks
+```{r get_methylation}
+ltr12c_meth <- getMeth(gp5d_meth_comb_smooth, regions = GRanges(ltr12c_loci), type = "smooth")
+
+ltr12c_meth_all <- bind_rows(lapply(1:nrow(ltr12c_loci), function(i) {
+  
+  bind_cols(ltr12c_loci[i,], as_tibble(ltr12c_meth[[i]]) %>% 
+              rename(GP5d_WT = V1, GP5d_inh = V2))
+}))
+
+```
+
+Plot aggregated methylation difference in both GP5d cell lines, in a \pm 600bp window around the center of all the 500 LTR12C peaks.
+
+```{r plot_methylation_data}
+plot_meth <- bind_rows(makeMethPlot(gp5d_meth_comb_smooth[,1], GRanges(ltr12c_loci)),
+                       makeMethPlot(gp5d_meth_comb_smooth[,2], GRanges(ltr12c_loci)),
+                       .id = "line") %>% 
+  mutate(line = if_else(line == 1, "GP5d WT", "GP5d DNMTi + HDACi"),
+         dist = plot_meth$dist - median(plot_meth$dist))
+```
+
+```{r plot_methylation}
+ggplot(plot_meth, aes(x = dist, y = freq, color = line)) +
+  geom_line(size = 1) +
+  xlab("Distance (bp)") +
+  ylab("Methylation frequency") +
+  scale_x_continuous(limits = c(-600, 600)) +
+  scale_y_continuous(limits = c(0.3, 1))
 ```
 
 
 
-```{r}
-ovls <- findOverlaps(GRanges(GP5d_inh), GRanges(ltr12c_loci))
 
-GP5d_inh %>%
-  bind_cols(., ltr12c_loci[subjectHits(ovls), ] %>% rename_with(~ paste0("ltr12c_", colnames(ltr12c_loci))))
-```
+
+
+
+
+

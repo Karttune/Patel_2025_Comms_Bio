@@ -6,7 +6,7 @@ theme_set(theme_bw() +
               panel.grid.minor = element_blank(),
               strip.background = element_blank(),
               panel.border = element_blank(),
-              axis.text = element_text(color = "black", size = 8),
+              axis.text = element_text(color = "black", size = 10),
               axis.title = element_text(color = "black", size = 10),
               axis.line = element_line(linewidth = unit(0.5, "pt")),
               text = element_text(color = "black"),
