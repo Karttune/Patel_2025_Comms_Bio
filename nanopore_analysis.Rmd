@@ -36,6 +36,8 @@ ltr12c_loci <- read_tsv("data/LTR12C/LTR12C_DNMT_HDAC_Up_bothstrand_GP5d.bed", c
 ltr12c_tbx <- paste0(ltr12c_loci$seqnames, ":", ltr12c_loci$start, "-", ltr12c_loci$end)
 
 getMeth(gp5d_meth_comb_smooth, regions = , type = "smooth")
+
+#äkdaks
 ```
 
 
