@@ -1,9 +1,12 @@
 ---
 title: "Patel et al. 2024 revision, Nanopore analysis"
-output: html_notebook
+output:
+  html_notebook: default
+  pdf_document: default
 ---
 
-Read packages and methylation utilities:  
+#### Read packages and methylation utilities:
+
 ```{r utils, message = F, warning = F}
 source("R/methylation_R_utils.R")
 source("R/style.R")
@@ -12,12 +15,14 @@ library(tidyverse)
 library(bsseq)
 library(GenomicRanges)
 library(BiocParallel)
+library(khroma)
+library(ggrepel)
 
 p <- MulticoreParam(workers = 40, progressbar = T)
 ```
 
+#### Read the BSmoothed data in for GP5d WT and DNMTi+HDACi.
 
-Read the BSmoothed data in for GP5d WT and DNMTi+HDACi:  
 ```{r import data, message = F, warning = F}
 
 # gp5d_meth <- read.bismark("/data/kzkarttu/nanopore/GP5D/methylation/methylation_calls.GP5D.raw.cpg.mfreq.txt.gz")
@@ -31,7 +36,7 @@ gp5d_meth_comb_smooth <- readRDS("data/bsmooth/GP5d_WT_inh_CpG_bsmoothed.rds")
 ltr12c_loci <- read_tsv("data/LTR12C/LTR12C_DNMT_HDAC_Up_bothstrand_GP5d.bed", col_names = c("seqnames", "start", "end", "name", "width", "strand"))
 ```
 
-Tabulate methylation per each LTR12C locus in GP5d WT and GP5d DNMTi+HDACi
+#### Tabulate methylation per each LTR12C locus in GP5d WT and GP5d DNMTi+HDACi.
 
 ```{r get_methylation}
 ltr12c_meth <- getMeth(gp5d_meth_comb_smooth, regions = GRanges(ltr12c_loci), type = "smooth")
@@ -44,7 +49,7 @@ ltr12c_meth_all <- bind_rows(lapply(1:nrow(ltr12c_loci), function(i) {
 
 ```
 
-Plot aggregated methylation difference in both GP5d cell lines, in a \pm 600bp window around the center of all the 500 LTR12C peaks.
+#### Plot aggregated methylation difference in both GP5d cell lines, in a \pm 600bp window around the center of all the 500 LTR12C peaks.
 
 ```{r plot_methylation_data}
 plot_meth <- bind_rows(makeMethPlot(gp5d_meth_comb_smooth[,1], GRanges(ltr12c_loci)),
@@ -53,6 +58,8 @@ plot_meth <- bind_rows(makeMethPlot(gp5d_meth_comb_smooth[,1], GRanges(ltr12c_lo
   mutate(line = if_else(line == 1, "GP5d WT", "GP5d DNMTi + HDACi"),
          dist = plot_meth$dist - median(plot_meth$dist))
 ```
+
+## Aggregated methylation line plot over all 500 LTR12C loci
 
 ```{r plot_methylation}
 ggplot(plot_meth, aes(x = dist, y = freq, color = line)) +
@@ -63,11 +70,38 @@ ggplot(plot_meth, aes(x = dist, y = freq, color = line)) +
   scale_y_continuous(limits = c(0.3, 1))
 ```
 
+#### Comparing the extent of the difference in methylation between the two GP5d conditions, the table is sorted by the largest mean difference in methylation and the smallest adjusted p-value. "One" in this table means the GP5d WT and "Two" is GP5d DNMTi+HDACi.
 
+```{r meth_difference_data}
+gp5d_meth_comb_compare <- compareRegions(gp5d_meth_comb_smooth, 1, 2, GRanges(ltr12c_loci))
+colors <- c("gray40", "#004488", "#BB5566")
 
+gp5d_meth_comb_compare %>% 
+  arrange(meandiff, adjusted.pval)
+```
 
+## Volcano plot of mean differences in methylation
 
+#### Plotting the difference in methylation between both conditions in a volcano plot. Top 6 largest mean differences are marked in the plot.
 
+```{r meth_difference_data_plot}
+
+gp5d_meth_comb_compare %>% 
+  mutate(lab = if_else(meandiff < -0.45, paste0(chr, ":", start, "-", end), NA),
+         sig = case_when(
+    adjusted.pval <= 0.05 & meandiff > 0 ~ "sig_pos",
+    adjusted.pval <= 0.05 & meandiff < 0 ~ "sig_neg",
+    .default = "insig"
+  )) %>% 
+  ggplot(aes(x = meandiff, y = -log10(adjusted.pval), color = sig, label = lab)) +
+  geom_point() +
+  scale_colour_manual(values = colors) +
+  geom_hline(yintercept = -log10(0.05), color = "gray40", linetype = "dashed") +
+  xlab("Difference in mean methylation \nGP5d inhibited - GP5d WT") +
+  ylab("-log10 (Adjusted p-value)") +
+  geom_text_repel(direction = "x", color = "black")
+
+```
 
 
 

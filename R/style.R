@@ -13,6 +13,8 @@ theme_set(theme_bw() +
               legend.background = element_rect(color = "black", fill = NA, linewidth = 0.5, linetype = "solid")
             ))
 
+bed_colnames = c("seqnames", "start", "end", "name", "score", "strand")
+
 #theme_konsta_minimal <- function (base_size = 12)
 #{
 #  theme_classic (base_size = base_size)  %+replace%
