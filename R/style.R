@@ -1,4 +1,7 @@
+library(BiocParallel)
+
 p <- MulticoreParam(40, progressbar = TRUE)
+
 theme_set(theme_bw() +
             theme(
               line = element_line(linewidth = unit(0.5, "points")),
