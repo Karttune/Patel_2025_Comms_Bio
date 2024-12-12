@@ -1,0 +1,12 @@
+../align/concatenated/GP5d_DNMTi_HDACi_concatenated.bam
+../data/Nanopore/GP5d_DNMTi_HDACi/methylation/GP5d_DNMTi_HDACi_bedMethyl_GpC_no_GCG.bed.gz
+pileup_GpC_no_GCG.sh: line 16: bgzip: command not found
+> Error! file not found: ../align/concatenated/GP5d_DNMTi_HDACi_concatenated.bam
+pileup_GpC_no_GCG.sh: line 18: /usr/bin/tabix: Permission denied
+../data/Nanopore/GP5d_DNMTi_HDACi/align/concatenated/GP5d_DNMTi_HDACi_concatenated.bam
+../data/Nanopore/GP5d_DNMTi_HDACi/methylation/GP5d_DNMTi_HDACi_bedMethyl_GpC_no_GCG.bed.gz
+> calculated chunk size: 60, interval size 100000, processing 6000000 positions concurrently
+> ignoring mod code h
+> attempting to sample 10042 reads
+> Using filter threshold 0.8251953 for C.
+> Done, processed 227182788 rows. Processed ~7799900 reads and skipped ~3 reads.

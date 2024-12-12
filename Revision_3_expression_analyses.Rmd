@@ -1,0 +1,235 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(tidyverse)
+library(ggpubr)
+library(ggrepel)
+library(RColorBrewer)
+library(khroma)
+
+source("R/utils.R")
+source("R/style.R")
+```
+
+
+```{r}
+f <- list.files("/data/kzkarttu/projects/Patel_2024_revision/data/expression/DESEQ2_table_DNMTi_HDACi/", pattern = ".csv", full.names = T)
+
+res <- lapply(f, read_delim, delim = ";")
+names(res) <- c("GP5d_C2_DNMTi_HDACi", "GP5d_WT_DNMTi_HDACi", "OE19_DNMTi_HDACi")
+
+p53_pred <- read_tsv("/data/kzkarttu/papers/nat_comms_2023/scripts/annotations/p53_binding_predictions_wang_2007.txt")
+
+bind_rows(res, .id = "line") |>
+  filter(log2FoldChange > 1, padj < 0.05) |>
+  mutate(
+    te_name = str_remove(row.names, "chr\\d+\\|\\d+\\|\\d+\\||chr[XY]\\|\\d+\\|\\d+\\|"),
+    subfamily = str_extract(te_name, "[^|]+")
+  ) |>
+  left_join(p53_pred, by = c("subfamily" = "LTR/ERV")) |>
+  filter(!is.na(Percentage)) |>
+  group_by(line, subfamily) |>
+  summarize(l2fc = mean(log2FoldChange), perc = first(Percentage)) |>
+  ggplot(aes(x = l2fc, y = perc)) +
+  facet_wrap(~line) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggpubr::stat_cor()
+
+# ggsave("/data/kzkarttu/projects/Patel_2024_revision/figures/241126_TE_subfamily_expression_p53_percentage_cor_scatterplot.pdf", width = 8, height = 5)
+```
+
+```{r}
+bind_rows(res, .id = "line") |>
+  filter(log2FoldChange > 1, padj < 0.05) |>
+  mutate(
+    te_name = str_remove(row.names, "chr\\d+\\|\\d+\\|\\d+\\||chr[XY]\\|\\d+\\|\\d+\\|"),
+    subfamily = str_extract(te_name, "[^|]+"),
+    class = str_extract(te_name, "LTR$|DNA$|LINE$|SINE$|Retroposon$")
+  ) |>
+  left_join(p53_pred, by = c("subfamily" = "LTR/ERV")) |>
+  filter(!is.na(Percentage), Percentage > 1) |>
+  ggplot(aes(x = log2FoldChange, y = Percentage, fill = class, label = subfamily)) +
+  facet_wrap(~line) +
+  geom_smooth(method = "lm", alpha = .5) +
+  geom_point(shape = 21) +
+  geom_text_repel() +
+  ggpubr::stat_cor()
+
+
+# ggsave("/data/kzkarttu/projects/Patel_2024_revision/figures/241126_TE_expression_p53_percentage_cor_scatterplot.pdf", width = 8, height = 5)
+```
+
+```{r}
+reads <- read_tsv("/data/kzkarttu/projects/Patel_2024_revision/data/expression/Input_for_heatmap_MAGE.tab")
+
+pal <- brewer.pal(100, "YlOrRd")
+
+row_ord <- reads |>
+  pivot_longer(GP5d_DMSO_1:OE19_DNMTi_HDACi_3) |>
+  pull(Gene) |>
+  unique()
+
+reads |>
+  pivot_longer(GP5d_DMSO_1:OE19_DNMTi_HDACi_3) |>
+  mutate(Gene = factor(Gene, levels = rev(row_ord))) |>
+  ggplot(aes(x = name, y = Gene, fill = log10(value))) +
+  geom_tile() +
+  scale_fill_gradientn(colors = pal) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title = element_blank(), legend.position = "top") +
+  guides(fill = guide_legend(title = "log10(Normalized counts)")) +
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0))
+
+# ggsave("/data/kzkarttu/projects/Patel_2024_revision/figures/241125_MAGE_gene_heatmap.pdf", width = 6, height = 5)
+```
+
+#### Reading in sequences and making a lookup table for the IDs for easing future analysis
+
+```{r}
+library(p53retriever)
+library(Biostrings)
+library(parallel)
+
+rmsk_seq <- readDNAStringSet("/data/kzkarttu/annotations/repeats/repeatMasker_filtered.fa")
+
+# A lookup table for the fasta ids
+rmsk_seq_ids <- tibble(fa_id = names(rmsk_seq)) |>
+  left_join(rmsk |> mutate(id = paste0(name, "::", seqnames, ":", start, "-", end)), by = c("fa_id" = "id"))
+
+# rmsk_seq_ids |>
+#   write_tsv("/data/kzkarttu/annotations/repeats/repeatMasker_filtered_fasta_ids.tsv.gz")
+```
+
+```{r}
+rmsk_seq_line <- as.character(rmsk_seq[rmsk_seq_ids$class == "LINE", ])
+
+# p53re_res <- mcMap(p53sf, rmsk_seq_line, mc.cores = 40)
+# p53re_res <- bind_rows(p53re_res, .id = "te")
+# write_tsv(bind_rows(p53re_res, .id = "te"), "data/p53retriever/241210_rmsk_p53retriever_res.tsv.gz")
+
+p53re_res_line <- read_tsv("data/p53retriever/241210_rmsk_p53retriever_res.tsv.gz")
+
+p53re_res_line_out <- lapply(seq_along(res), function(i) {
+  p53re_res_line |>
+    right_join(tibble(te = names(rmsk_seq_line)), by = "te") |>
+    left_join(rmsk_seq_ids, by = c("te" = "fa_id")) |>
+    mutate(
+      start.y = start.y + 2,
+      join_col = paste(seqnames, start.y, end, name, sep = "|")
+    ) |>
+    left_join(res[[i]], by = c("join_col" = "row.names")) |>
+    select(-join_col) |>
+    mutate(grades = replace(grades, is.na(grades), 0)) |>
+    group_by(te, grades) |>
+    summarize(n = n(), l2fc = max(log2FoldChange), padj = max(padj)) |>
+    ungroup() |>
+    filter(!is.na(l2fc)) |>
+    mutate(
+      sig = if_else(abs(l2fc) > 1 & padj < 0.05, "sig", "insig"),
+      sig = factor(sig, levels = c("sig", "insig"))
+    ) |>
+    group_by(te) |>
+    summarize(grades = max(grades), l2fc = max(l2fc), padj = max(padj), sig = unique(sig))
+})
+
+path <- paste0("figures/", dt(), "_GP5d_WT_C2_OE19_DNMTi_HDACi_p53RE_grades_LINE_expression_boxplots.pdf")
+pdf(path, width = 6, height = 4)
+for (i in 1:3) {
+  p <- ggplot(p53re_res_line_out[[i]], aes(x = factor(grades), y = l2fc)) +
+    # geom_boxplot(alpha = .5, outlier.shape = NA) +
+    geom_jitter(aes(color = sig, size = sig), alpha = .5) +
+    geom_boxplot(alpha = .25, outlier.shape = NA) +
+    geom_hline(yintercept = 0, color = "gray40", linetype = "dashed") +
+    scale_size_manual(values = c(.75, .1)) +
+    scale_color_manual(values = c("indianred", "gray40")) +
+    labs(title = paste0("LINEs, ", names(res[i])))
+
+  if (i == 2) {
+    print(p + stat_compare_means(comparisons = list(c("0", "1"), c("0", "2"), c("0", "3"), c("0", "4")), method.args = list(alternative = "less")))
+  } else {
+    print(p + stat_compare_means(comparisons = list(c("0", "1"), c("0", "2"), c("0", "3"), c("0", "4"), c("0", "5")), method.args = list(alternative = "less")))
+  }
+}
+dev.off()
+# ggsave("figures/GP5d_C2_DNMTi_HDACi_p53RE_grades_LINE_expression_boxplot.pdf", width = 6, height = 5)
+```
+
+```{r}
+rmsk_seq_ltr <- rmsk_seq[na.omit(rmsk_seq_ids$class == "LTR"), ]
+
+# p53re_res_ltr <- mcMap(p53sf, as.character(rmsk_seq_ltr), mc.cores = 40)
+# p53re_res_ltr <- bind_rows(p53re_res_ltr, .id = "te")
+# write_tsv(bind_rows(p53re_res_ltr, .id = "te"), "data/p53retriever/241212_rmsk_LTR_p53retriever_res.tsv.gz")
+
+p53re_res_ltr_out <- lapply(seq_along(res), function(i) {
+  p53re_res_ltr |>
+    right_join(tibble(te = names(rmsk_seq_ltr)), by = "te") |> # Joining the p53retriever output table with all the TEs, i.e. the ones that had no p53REs
+    left_join(rmsk_seq_ids, by = c("te" = "fa_id")) |>
+    mutate(
+      start.y = start.y + 2,
+      join_col = paste(seqnames, start.y, end, name, sep = "|")
+    ) |>
+    left_join(res[[i]], by = c("join_col" = "row.names")) |>
+    select(-join_col) |>
+    mutate(grades = replace(grades, is.na(grades), 0)) |>
+    group_by(te, grades) |>
+    summarize(n = n(), l2fc = max(log2FoldChange), padj = max(padj)) |>
+    ungroup() |>
+    filter(!is.na(l2fc)) |>
+    mutate(
+      sig = if_else(abs(l2fc) > 1 & padj < 0.05, "sig", "insig"),
+      sig = factor(sig, levels = c("sig", "insig"))
+    ) |>
+    group_by(te) |>
+    summarize(grades = max(grades), l2fc = max(l2fc), padj = max(padj), sig = unique(sig))
+})
+
+path <- paste0("figures/", dt(), "_GP5d_WT_C2_OE19_DNMTi_HDACi_p53RE_grades_LTR_expression_boxplots.pdf")
+pdf(path, width = 6, height = 4)
+for (i in 1:3) {
+  p <- ggplot(p53re_res_ltr_out[[i]], aes(x = factor(grades), y = l2fc)) +
+    # geom_boxplot(alpha = .5, outlier.shape = NA) +
+    geom_jitter(aes(color = sig, size = sig), alpha = .5) +
+    geom_boxplot(alpha = .25, outlier.shape = NA) +
+    geom_hline(yintercept = 0, color = "gray40", linetype = "dashed") +
+    scale_size_manual(values = c(.75, .1)) +
+    scale_color_manual(values = c("indianred", "gray40")) +
+    stat_compare_means(comparisons = list(c("0", "1"), c("0", "2"), c("0", "3"), c("0", "4"), c("0", "5")), method.args = list(alternative = "less")) +
+    labs(title = paste0("LTRs, ", names(res[i])))
+
+  print(p)
+}
+dev.off()
+```
+
+```{r}
+test <- p53re_res_ltr |> 
+  left_join(rmsk_seq_ids, by = c("te" = "fa_id")) 
+
+test |> 
+  filter(subfamily %in% c("MER61E", "MER61C", "LTR10C")) |> 
+  select(te, start.x, grades, subfamily) |> 
+  ggplot(aes(x = start.x, y = grades, fill = factor(grades))) +
+  facet_wrap(te~subfamily, scales = "free_y") +
+  geom_col(alpha = .4) +
+  # geom_density(alpha = .4) +
+  scale_fill_batlow(discrete = T) +
+  scale_color_batlow(discrete = T)
+
+path <- paste("figures/", dt(), "_LTR_p53retriever_grade_densityplot.pdf")
+ggsave(path, width = 24, height = 16)
+```
+
+```{r}
+p53re_res_ltr_out[[1]] |> 
+  mutate(sig = if_else(l2fc > 1 & padj < 0.05, "sig_up", if_else(l2fc < -1 & padj < 0.05, "sig_down", "insig")),
+         sig = factor(sig, levels = c("sig_up", "sig_down", "insig"))) |> 
+  ggplot(aes(x = grades, y = sig)) +
+  geom_count()
+```
+

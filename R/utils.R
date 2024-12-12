@@ -4,6 +4,12 @@ library(RColorBrewer)
 library(tidyverse)
 library(soGGi)
 
+# Date today in YYMMDD format:
+dt <- function() {
+  today <- Sys.Date()
+  return(format(today, format = "%y%m%d"))
+}
+
 # Seed for reproducibility
 set.seed(123)
 
@@ -21,7 +27,8 @@ narrowpeak_colnames <- c("seqnames", "start", "end", "name", "score", "strand", 
 ame_cnames <- c("rank", "motif_db", "motif_ID", "motif_name", "consensus", "pval", "adj_pval", "eval", "tests", "fasta_max", "pos", "neg", "pwm_min", "tp", "pct_tp", "fp", "pct_fp")
 
 # Annotation directory
-anndir <- "/data/kzkarttu/gradu/annotations"
+anndir <- "/data/kzkarttu/annotations"
+# anndir <- "/data/kzkarttu/gradu/annotations"
 
 # mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl", host = "https://nov2020.archive.ensembl.org")
 
@@ -33,16 +40,27 @@ gencode_annotation <- gencode_annotation %>%
 gencode_annotation_tss <- gencode_annotation_tss %>% 
   mutate(ensid = str_remove(ensembl_gene_id_version, "\\.\\d+"))
 
+# if (!exists("repeatmasker")) {
+#   repeatmasker <- read_tsv(file.path("/data/kzkarttu/gradu/annotations/repeatMasker/repeatMasker_sorted.bed"), col_names = c("seqnames", "start", "end", "name", "score", "strand")) %>%
+#     filter(seqnames %in% chrs) %>% # Only canonical chromosomes (chr1-22,XY)
+#     mutate(
+#       class = str_extract(name, "[[:alnum:]:punct:]+$"), # Making columns for TE classes and subfamilies
+#       subf = str_remove(name, "chr\\d+\\|\\d+\\|\\d+\\||chr[XY]\\|\\d+\\|\\d+\\|"),
+#       te_name = str_extract(subf, "[^\\|]+")
+#     )
+#   repeatmasker_gr <- GRanges(repeatmasker)
+# }
 
-if (!exists("repeatmasker")) {
-  repeatmasker <- read_tsv(file.path("/data/kzkarttu/gradu/annotations/repeatMasker/repeatMasker_sorted.bed"), col_names = c("seqnames", "start", "end", "name", "score", "strand")) %>%
+# Repeatmasker annotations:
+if (!exists("rmsk")) {
+  rmsk <- read_tsv(paste0(anndir, "/repeats/repeatMasker_filtered.bed.gz"), col_types = "ciiccc", col_names = c("seqnames", "start", "end", "name", "score", "strand")) %>% # Specifying col_types to prevent scientific notation for start-end coordinates
     filter(seqnames %in% chrs) %>% # Only canonical chromosomes (chr1-22,XY)
     mutate(
-      class = str_extract(name, "[[:alnum:]:punct:]+$"), # Making columns for TE classes and subfamilies
-      subf = str_remove(name, "chr\\d+\\|\\d+\\|\\d+\\||chr[XY]\\|\\d+\\|\\d+\\|"),
-      te_name = str_extract(subf, "[^\\|]+")
+      class = str_extract(name, "LINE$|SINE$|LTR$|DNA$|Retroposon$"), # Making columns for TE classes and subfamilies
+      family = str_remove_all(name, "^[^\\|]*\\||\\|[:alnum:]+$"),
+      subfamily = str_extract(name, "[^\\|]*")
     )
-  repeatmasker_gr <- GRanges(repeatmasker)
+  rmsk_gr <- GRanges(rmsk)
 }
 
 # Some dplyr options

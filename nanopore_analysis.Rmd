@@ -3,6 +3,8 @@ title: "Patel et al. 2024 revision, Nanopore analysis"
 output:
   html_notebook: default
   pdf_document: default
+editor_options: 
+  chunk_output_type: inline
 ---
 
 Read packages and methylation utilities:
@@ -31,6 +33,7 @@ Read the BSmoothed data in for GP5d WT and DNMTi+HDACi.
 
 gp5d_meth_comb_smooth <- readRDS("data/bsmooth/GP5d_WT_inh_CpG_bsmoothed.rds")
 ltr12c_loci <- read_tsv("data/LTR12C/LTR12C_DNMT_HDAC_Up_bothstrand_GP5d.bed", col_names = c("seqnames", "start", "end", "name", "width", "strand"))
+
 ```
 
 Tabulate methylation per each LTR12C locus in GP5d WT and GP5d DNMTi+HDACi.
@@ -150,6 +153,42 @@ bind_rows(ltr12c_meth_loci_ag_rollmeans, .id = "cells") %>%
   theme(legend.position = c(.88, .91))
 
 # ggsave("figures/240703_GP5d_wt_inh_agg_lineplot_length_normalized.pdf", width = 7.5, height = 5)
+```
+
+Also plotting data from FIMO of motifs at LTR12C, normalized by length, top 10 motifs by n of statistically significant hits.
+
+```{r fimo_data, fig.width=6, fig.height=4}
+dens_colors <- c("#001219", "#005F73", "#0A9396", "#94D2BD", "#E9D8A6", "#EE9B00", "#CA6702", "#BB3E03", "#AE2012", "#9B2226")
+
+ltr12c_motifs <- read_tsv("/data/dpatel/GP5D/ChIP_seq/Seq_run_August_2022/SE_Analysis/Gain_Loss_of_KAP1_binding/Motif_analysis_upregulated_LTR12C/FIMO_GP5d_LTR12C/fimo.tsv") %>% 
+  rename_with(~ tolower(gsub("-", "_", .x, fixed = TRUE))) # Renaming colums with dashed to underscores
+
+ltr12c_motifs_filt <- ltr12c_motifs %>% 
+  filter(q_value < 0.05) %>% 
+  group_by(motif_alt_id) %>% 
+  dplyr::summarize(n = n()) %>% 
+  arrange(desc(n)) %>% 
+  slice_head(n = 9) %>% 
+  pull(motif_alt_id)
+  
+ltr12c_motifs %>% 
+  filter(q_value < 0.05, motif_alt_id %in% ltr12c_motifs_filt) %>% 
+  ggplot(aes(x = start, color = motif_alt_id, fill = motif_alt_id)) +
+  geom_density(alpha = .25) +
+  scale_color_muted() +
+  scale_fill_muted()
+
+ltr12c_motifs %>% 
+  filter(q_value < 0.05, motif_alt_id %in% ltr12c_motifs_filt) %>% 
+  mutate(ltr12c_start = as.numeric(str_remove(str_extract(sequence_name, ":\\d+"), ":")),
+         ltr12c_end = as.numeric(str_remove(str_extract(sequence_name, "-\\d+$"), "-")),
+         motif_start = ltr12c_start + start,
+         norm_dist = (motif_start - ltr12c_start) / (ltr12c_end - ltr12c_start)) %>% 
+  ggplot(aes(x = norm_dist, color = motif_alt_id, fill = motif_alt_id)) +
+  geom_density(alpha = .3) +
+  scale_color_muted() +
+  scale_fill_muted()
+
 ```
 
 Aggregated methylation line plot over all 500 LTR12C loci, not normalized for LTR12C length
@@ -308,26 +347,3 @@ gp5d_meth_comb_compare_all_up  %>%
 
 # ggsave("figures/240703_GP5d_wt_inh_all_up_methylation_xyplot_by_class.pdf", width = 6, height = 4.5)
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
