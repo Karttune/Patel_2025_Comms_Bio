@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Session genome="hg38" locus="chr11:64804347-64811876" nextAutoscaleGroup="5" version="8">
+    <Resources>
+        <Resource path="/data/kzkarttu/projects/Patel_2024_revision/data/Nanopore/GP5d_DNMTi_HDACi/methylation/bedgraph/GP5d_DNMTi_HDACi_bedMethyl_no_GCG.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/projects/Patel_2024_revision/data/Nanopore/OE19_DNMTi_HDACi/bedgraphs/OE19_DNMTi_HDACi_CpG_bedMethyl.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/projects/Patel_2024_revision/data/Nanopore/OE19_DNMTi_HDACi/bedgraphs/OE19_DNMTi_HDACi_GpC_bedMethyl.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/raw_data/GP5d_YY1_KO/NaNOMe-seq/bedgraphs/GP5d_YY1_KO_CpG_bedMethyl.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/projects/OE19_insertions_project/data/TLDR/v1.2.2/all_cell_lines/all_cell_lines_de_novo_filter_passed_insertions.bed" type="bed"/>
+        <Resource path="/data/kzkarttu/projects/Patel_2024_revision/data/Nanopore/GP5d_DNMTi_HDACi/methylation/bedgraph/GP5d_DNMTi_HDACi_bedMethyl_GpC_no_GCG.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/raw_data/GP5D/NaNOMe-seq/bedgraphs/GP5d_WT_CpG_bedMethyl.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/raw_data/SW1990/NaNOMe-seq/bedgraphs/SW1990_GpC_bedMethyl.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/annotations/geneHancer/GeneHancer_version_4_4_igv.bed" type="bed"/>
+        <Resource path="/data/kzkarttu/nanopore/colo_int_epi/methylation/colo_int_epi.raw.gpc.mfreq.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/gradu/annotations/ENCODE/ENCODE_cCRE_combined.bed" type="bed"/>
+        <Resource path="/data/kzkarttu/raw_data/SW1990/NaNOMe-seq/bedgraphs/SW1990_CpG_bedMethyl.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/raw_data/GP5D/NaNOMe-seq/bedgraphs/GP5d_WT_GpC_bedMethyl.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/nanopore/HPDE/methylation/HPDE.raw.gpc.mfreq.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/raw_data/COLO320/NaNOMe-seq/bedgraphs/COLO320_GpC_bedMethyl.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/nanopore/HPDE/methylation/HPDE.raw.cpg.mfreq.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/raw_data/COLO320/NaNOMe-seq/bedgraphs/COLO320_CpG_bedMethyl.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/nanopore/COLO320/methylation/methylation_calls.COLO320.raw.gpc.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/annotations/repeats/repeatMasker_filtered.bed.gz" type="bed"/>
+        <Resource path="/data/kzkarttu/nanopore/Het1/methylation/methylation_calls.Het1.raw.cpg.mfreq.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/nanopore/colo_int_epi/methylation/colo_int_epi.raw.cpg.mfreq.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/nanopore/Het1/methylation/methylation_calls.Het1.raw.gpc.mfreq.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/nanopore/GP5D/methylation/methylation_calls.GP5D.raw.gpc.mfreq.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/projects/Patel_2024_revision/data/Nanopore/OE19_DNMTi_HDACi/methylation/bedgraph/OE19_DNMTi_HDACi_m_CG0_combined.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/projects/OE19_insertions_project/annotations/TLDR/nonref.collection.hg38.chr.bed.gz" type="bed"/>
+        <Resource path="/data/kzkarttu/annotations/pcawg/240917_PCAWG_colo_eso_insertions_filtered_hg38.bed" type="bed"/>
+        <Resource path="/data/kzkarttu/raw_data/GP5d_YY1_KO/NaNOMe-seq/bedgraphs/GP5d_YY1_KO_GpC_bedMethyl.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/nanopore/COLO320/methylation/methylation_calls.COLO320.raw.cpg.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/nanopore/PANC1/methylation/methylation_calls.PANC1.raw.cpg.mfreq.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/nanopore/OE19/methylation/methylation_calls.OE19.raw.cpg.mfreq.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/nanopore/PANC1/methylation/methylation_calls.PANC1.raw.gpc.mfreq.bw" type="bw"/>
+        <Resource path="/data/kzkarttu/nanopore/OE19/methylation/methylation_calls.OE19.raw.gpc.mfreq.bw" type="bw"/>
+    </Resources>
+    <Panel height="1200" name="DataPanel" width="1901">
+        <Track attributeKey="methylation_calls.COLO320.raw.cpg.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="17,138,178" fontSize="10" id="/data/kzkarttu/nanopore/COLO320/methylation/methylation_calls.COLO320.raw.cpg.bw" name="methylation_calls.COLO320.raw.cpg.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="colo_int_epi.raw.cpg.mfreq.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="7,59,76" fontSize="10" id="/data/kzkarttu/nanopore/colo_int_epi/methylation/colo_int_epi.raw.cpg.mfreq.bw" name="colo_int_epi.raw.cpg.mfreq.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="methylation_calls.Het1.raw.cpg.mfreq.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="6,214,160" fontSize="10" id="/data/kzkarttu/nanopore/Het1/methylation/methylation_calls.Het1.raw.cpg.mfreq.bw" name="methylation_calls.Het1.raw.cpg.mfreq.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="HPDE.raw.cpg.mfreq.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="247,140,107" fontSize="10" id="/data/kzkarttu/nanopore/HPDE/methylation/HPDE.raw.cpg.mfreq.bw" name="HPDE.raw.cpg.mfreq.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="methylation_calls.OE19.raw.cpg.mfreq.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="255,209,102" fontSize="10" id="/data/kzkarttu/nanopore/OE19/methylation/methylation_calls.OE19.raw.cpg.mfreq.bw" name="methylation_calls.OE19.raw.cpg.mfreq.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="OE19_DNMTi_HDACi_m_CG0_combined.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="/data/kzkarttu/projects/Patel_2024_revision/data/Nanopore/OE19_DNMTi_HDACi/methylation/bedgraph/OE19_DNMTi_HDACi_m_CG0_combined.bw" name="OE19_DNMTi_HDACi_m_CG0_combined.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="0.8888889" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="methylation_calls.PANC1.raw.cpg.mfreq.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="239,71,111" fontSize="10" id="/data/kzkarttu/nanopore/PANC1/methylation/methylation_calls.PANC1.raw.cpg.mfreq.bw" name="methylation_calls.PANC1.raw.cpg.mfreq.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="methylation_calls.COLO320.raw.gpc.bw" autoScale="false" clazz="org.broad.igv.track.DataSourceTrack" color="17,138,178" fontSize="10" id="/data/kzkarttu/nanopore/COLO320/methylation/methylation_calls.COLO320.raw.gpc.bw" name="methylation_calls.COLO320.raw.gpc.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="30.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="30.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="colo_int_epi.raw.gpc.mfreq.bw" autoScale="false" clazz="org.broad.igv.track.DataSourceTrack" color="7,59,76" fontSize="10" id="/data/kzkarttu/nanopore/colo_int_epi/methylation/colo_int_epi.raw.gpc.mfreq.bw" name="colo_int_epi.raw.gpc.mfreq.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="30.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="30.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="methylation_calls.Het1.raw.gpc.mfreq.bw" autoScale="false" clazz="org.broad.igv.track.DataSourceTrack" color="6,214,160" fontSize="10" id="/data/kzkarttu/nanopore/Het1/methylation/methylation_calls.Het1.raw.gpc.mfreq.bw" name="methylation_calls.Het1.raw.gpc.mfreq.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="30.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="30.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="HPDE.raw.gpc.mfreq.bw" autoScale="false" clazz="org.broad.igv.track.DataSourceTrack" color="247,140,107" fontSize="10" id="/data/kzkarttu/nanopore/HPDE/methylation/HPDE.raw.gpc.mfreq.bw" name="HPDE.raw.gpc.mfreq.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="30.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="30.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="methylation_calls.OE19.raw.gpc.mfreq.bw" autoScale="false" clazz="org.broad.igv.track.DataSourceTrack" color="255,209,102" colorScale="ContinuousColorScale;50.0;30.0;93.0;93.72000122070312;255,255,255;255,255,255;255,209,102" fontSize="10" id="/data/kzkarttu/nanopore/OE19/methylation/methylation_calls.OE19.raw.gpc.mfreq.bw" name="methylation_calls.OE19.raw.gpc.mfreq.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="30.0" drawBaseline="true" flipAxis="false" maximum="93.72" minimum="30.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="methylation_calls.PANC1.raw.gpc.mfreq.bw" autoScale="false" clazz="org.broad.igv.track.DataSourceTrack" color="239,71,111" colorScale="ContinuousColorScale;30.0;51.30644989013672;255,255,255;239,71,111" fontSize="10" id="/data/kzkarttu/nanopore/PANC1/methylation/methylation_calls.PANC1.raw.gpc.mfreq.bw" name="methylation_calls.PANC1.raw.gpc.mfreq.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="30.0" drawBaseline="true" flipAxis="false" maximum="73.433334" minimum="30.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="methylation_calls.GP5D.raw.gpc.mfreq.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="/data/kzkarttu/nanopore/GP5D/methylation/methylation_calls.GP5D.raw.gpc.mfreq.bw" name="methylation_calls.GP5D.raw.gpc.mfreq.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GP5d_DNMTi_HDACi_bedMethyl_GpC_no_GCG.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="/data/kzkarttu/projects/Patel_2024_revision/data/Nanopore/GP5d_DNMTi_HDACi/methylation/bedgraph/GP5d_DNMTi_HDACi_bedMethyl_GpC_no_GCG.bw" name="GP5d_DNMTi_HDACi_bedMethyl_GpC_no_GCG.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="all_cell_lines_de_novo_filter_passed_insertions.bed" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;3.0;255,255,255;0,0,178" fontSize="10" groupByStrand="false" id="/data/kzkarttu/projects/OE19_insertions_project/data/TLDR/v1.2.2/all_cell_lines/all_cell_lines_de_novo_filter_passed_insertions.bed" name="all_cell_lines_de_novo_filter_passed_insertions.bed" visible="true"/>
+        <Track attributeKey="240917_PCAWG_colo_eso_insertions_filtered_hg38.bed" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;59.0;255,255,255;0,0,178" fontSize="10" groupByStrand="false" id="/data/kzkarttu/annotations/pcawg/240917_PCAWG_colo_eso_insertions_filtered_hg38.bed" name="240917_PCAWG_colo_eso_insertions_filtered_hg38.bed" visible="true"/>
+        <Track attributeKey="nonref.collection.hg38.chr.bed.gz" clazz="org.broad.igv.track.FeatureTrack" fontSize="10" groupByStrand="false" id="/data/kzkarttu/projects/OE19_insertions_project/annotations/TLDR/nonref.collection.hg38.chr.bed.gz" name="nonref.collection.hg38.chr.bed.gz" visible="true"/>
+        <Track attributeKey="OE19_DNMTi_HDACi_CpG_bedMethyl.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="/data/kzkarttu/projects/Patel_2024_revision/data/Nanopore/OE19_DNMTi_HDACi/bedgraphs/OE19_DNMTi_HDACi_CpG_bedMethyl.bw" name="OE19_DNMTi_HDACi_CpG_bedMethyl.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GP5d_DNMTi_HDACi_bedMethyl_no_GCG.bw" autoScale="false" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="/data/kzkarttu/projects/Patel_2024_revision/data/Nanopore/GP5d_DNMTi_HDACi/methylation/bedgraph/GP5d_DNMTi_HDACi_bedMethyl_no_GCG.bw" name="GP5d_DNMTi_HDACi_bedMethyl_no_GCG.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="10.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="SW1990_CpG_bedMethyl.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="/data/kzkarttu/raw_data/SW1990/NaNOMe-seq/bedgraphs/SW1990_CpG_bedMethyl.bw" name="SW1990_CpG_bedMethyl.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GP5d_WT_CpG_bedMethyl.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="/data/kzkarttu/raw_data/GP5D/NaNOMe-seq/bedgraphs/GP5d_WT_CpG_bedMethyl.bw" name="GP5d_WT_CpG_bedMethyl.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GP5d_YY1_KO_CpG_bedMethyl.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="/data/kzkarttu/raw_data/GP5d_YY1_KO/NaNOMe-seq/bedgraphs/GP5d_YY1_KO_CpG_bedMethyl.bw" name="GP5d_YY1_KO_CpG_bedMethyl.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="COLO320_CpG_bedMethyl.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="/data/kzkarttu/raw_data/COLO320/NaNOMe-seq/bedgraphs/COLO320_CpG_bedMethyl.bw" name="COLO320_CpG_bedMethyl.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="OE19_DNMTi_HDACi_GpC_bedMethyl.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="/data/kzkarttu/projects/Patel_2024_revision/data/Nanopore/OE19_DNMTi_HDACi/bedgraphs/OE19_DNMTi_HDACi_GpC_bedMethyl.bw" name="OE19_DNMTi_HDACi_GpC_bedMethyl.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GP5d_DNMTi_HDACi_bedMethyl_GpC_no_GCG.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="/data/kzkarttu/projects/Patel_2024_revision/data/Nanopore/GP5d_DNMTi_HDACi/methylation/bedgraph/GP5d_DNMTi_HDACi_bedMethyl_GpC_no_GCG.bw" name="GP5d_DNMTi_HDACi_bedMethyl_GpC_no_GCG.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="SW1990_GpC_bedMethyl.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="/data/kzkarttu/raw_data/SW1990/NaNOMe-seq/bedgraphs/SW1990_GpC_bedMethyl.bw" name="SW1990_GpC_bedMethyl.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GP5d_WT_GpC_bedMethyl.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="/data/kzkarttu/raw_data/GP5D/NaNOMe-seq/bedgraphs/GP5d_WT_GpC_bedMethyl.bw" name="GP5d_WT_GpC_bedMethyl.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GP5d_YY1_KO_GpC_bedMethyl.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="/data/kzkarttu/raw_data/GP5d_YY1_KO/NaNOMe-seq/bedgraphs/GP5d_YY1_KO_GpC_bedMethyl.bw" name="GP5d_YY1_KO_GpC_bedMethyl.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="100.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="COLO320_GpC_bedMethyl.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="/data/kzkarttu/raw_data/COLO320/NaNOMe-seq/bedgraphs/COLO320_GpC_bedMethyl.bw" name="COLO320_GpC_bedMethyl.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="1.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+    </Panel>
+    <Panel height="319" name="FeaturePanel" width="1901">
+        <Track attributeKey="Reference sequence" clazz="org.broad.igv.track.SequenceTrack" fontSize="10" id="Reference sequence" name="Reference sequence" sequenceTranslationStrandValue="+" shouldShowTranslation="false" visible="true"/>
+        <Track altColor="0,0,178" attributeKey="Gene" clazz="org.broad.igv.track.FeatureTrack" color="0,0,178" colorScale="ContinuousColorScale;0.0;770.0;255,255,255;0,0,178" fontSize="10" groupByStrand="false" height="35" id="hg38_genes" name="Gene" visible="true"/>
+        <Track attributeKey="repeatMasker_filtered.bed.gz" clazz="org.broad.igv.track.FeatureTrack" displayMode="EXPANDED" featureVisibilityWindow="4689251" fontSize="10" groupByStrand="false" id="/data/kzkarttu/annotations/repeats/repeatMasker_filtered.bed.gz" name="repeatMasker_filtered.bed.gz" visible="true"/>
+        <Track attributeKey="ENCODE_cCRE_combined.bed" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;2090.0;255,255,255;0,0,178" fontSize="10" groupByStrand="false" id="/data/kzkarttu/gradu/annotations/ENCODE/ENCODE_cCRE_combined.bed" name="ENCODE_cCRE_combined.bed" visible="true"/>
+        <Track attributeKey="GeneHancer_version_4_4_igv.bed" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;468.0;255,255,255;0,0,178" fontSize="10" groupByStrand="false" id="/data/kzkarttu/annotations/geneHancer/GeneHancer_version_4_4_igv.bed" name="GeneHancer_version_4_4_igv.bed" visible="true"/>
+    </Panel>
+    <PanelLayout dividerFractions="0.6048780487804878"/>
+    <HiddenAttributes>
+        <Attribute name="DATA FILE"/>
+        <Attribute name="DATA TYPE"/>
+        <Attribute name="NAME"/>
+    </HiddenAttributes>
+</Session>

@@ -2,8 +2,7 @@ library(ggsci)
 library(wesanderson)
 library(RColorBrewer)
 library(tidyverse)
-library(soGGi)
-
+  
 # Date today in YYMMDD format:
 dt <- function() {
   today <- Sys.Date()
@@ -27,8 +26,7 @@ narrowpeak_colnames <- c("seqnames", "start", "end", "name", "score", "strand", 
 ame_cnames <- c("rank", "motif_db", "motif_ID", "motif_name", "consensus", "pval", "adj_pval", "eval", "tests", "fasta_max", "pos", "neg", "pwm_min", "tp", "pct_tp", "fp", "pct_fp")
 
 # Annotation directory
-anndir <- "/data/kzkarttu/annotations"
-# anndir <- "/data/kzkarttu/gradu/annotations"
+anndir <- "/data/kzkarttu/gradu/annotations"
 
 # mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl", host = "https://nov2020.archive.ensembl.org")
 
@@ -51,6 +49,7 @@ gencode_annotation_tss <- gencode_annotation_tss %>%
 #   repeatmasker_gr <- GRanges(repeatmasker)
 # }
 
+anndir <- "/data/kzkarttu/annotations"
 # Repeatmasker annotations:
 if (!exists("rmsk")) {
   rmsk <- read_tsv(paste0(anndir, "/repeats/repeatMasker_filtered.bed.gz"), col_types = "ciiccc", col_names = c("seqnames", "start", "end", "name", "score", "strand")) %>% # Specifying col_types to prevent scientific notation for start-end coordinates
@@ -99,14 +98,14 @@ mask <- "/data/kzkarttu/gradu/annotations/mask/BSgenome_hg38_mask.bed"
 #  ))
 
 # Color palettes
-col_pal <- c(pal_npg(palette = "nrc")(4), "gray40")
-col_pal_nejm <- pal_nejm("default")(8)
-cluster_pal <- pal_nejm("default")(5)
-heat_cols_wes <- wes_palette("Zissou1", n = 5)
-heat_pal_wes <- colorRampPalette(c(heat_cols_wes[2], heat_cols_wes[3], heat_cols_wes[5]))(100)
-heat_cols_red <- c(scales::muted("blue", 40, 70), "white", scales::muted("red", 40, 100))
-heat_cols_orrd <- RColorBrewer::brewer.pal(9, "OrRd")
-heat_cols_orteal <- c("#008083", "#259EA1", "#FBAB37", "#F68105", "#FC5802")
+# col_pal <- c(pal_npg(palette = "nrc")(4), "gray40")
+# col_pal_nejm <- pal_nejm("default")(8)
+# cluster_pal <- pal_nejm("default")(5)
+# heat_cols_wes <- wes_palette("Zissou1", n = 5)
+# heat_pal_wes <- colorRampPalette(c(heat_cols_wes[2], heat_cols_wes[3], heat_cols_wes[5]))(100)
+# heat_cols_red <- c(scales::muted("blue", 40, 70), "white", scales::muted("red", 40, 100))
+# heat_cols_orrd <- RColorBrewer::brewer.pal(9, "OrRd")
+# heat_cols_orteal <- c("#008083", "#259EA1", "#FBAB37", "#F68105", "#FC5802")
 #"#036061", 
 # color_palette = c("#1B9E77", "#D95F02", "#7570B3", "#E7298A", "#66A61E", "#E6AB02", "#A6761D", "#666666")
 

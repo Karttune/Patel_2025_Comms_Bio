@@ -1,0 +1,92 @@
+---
+title: "Comms_bio_revision"
+author: "KonstaK"
+date: "2025-03-19"
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(tidyverse)
+library(tidyomics)
+library(ggpubr)
+library(ggrepel)
+library(RColorBrewer)
+library(khroma)
+
+source("R/utils.R")
+source("R/style.R")
+source("R/plot_utils.R")
+```
+
+```{r}
+meth_bws <- c(
+  "GP5d_WT_CpG" = "/data/kzkarttu/nanopore/GP5D/methylation/methylation_calls.GP5D.raw.cpg.mfreq.bw",
+  "GP5d_WT_GpC" = "/data/kzkarttu/nanopore/GP5D/methylation/methylation_calls.GP5D.raw.gpc.mfreq.bw",
+  "GP5d_DNMTi_HDACi_CpG" = "/data/kzkarttu/raw_data/GP5d_DNMTi_HDACi/NaNOMe-seq/methylation/bedgraph/GP5d_DNMTi_HDACi_bedMethyl_no_GCG.bw",
+  "GP5d_DNMTi_HDACi_GpC" = "/data/kzkarttu/raw_data/GP5d_DNMTi_HDACi/NaNOMe-seq/methylation/bedgraph/GP5d_DNMTi_HDACi_bedMethyl_GpC_no_GCG.bw",
+  "OE19_WT_CpG" = "/data/kzkarttu/nanopore/OE19/methylation/methylation_calls.OE19.raw.cpg.mfreq.bw",
+  "OE19_WT_GpC" = "/data/kzkarttu/nanopore/OE19/methylation/methylation_calls.OE19.raw.gpc.mfreq.bw",
+  "OE19_DNMTi_HDACi_CpG" = "/data/kzkarttu/raw_data/OE19_DNMTi_HDACi/NaNOMe-seq/bedgraphs/OE19_DNMTi_HDACi_CpG_bedMethyl.bw",
+  "OE19_DNMTi_HDACi_GpC" = "/data/kzkarttu/raw_data/OE19_DNMTi_HDACi/NaNOMe-seq/bedgraphs/OE19_DNMTi_HDACi_GpC_bedMethyl.bw"
+)
+
+gencode_transcript_ann <- read_tsv("/data/kzkarttu/gradu/annotations/genes/gencode.v36_transcripts.bed", col_names = c("seqnames", "start", "end", "ensembl_transcript_id_version", "score", "strand", "ensembl_gene_id_version", "hgnc_symbol"))
+
+loc <- GRanges("chr1:154627997-154627997") |> resize(width = 10000, fix = "center") # 10kb region over the ADAR promoter
+plot_single_region(bigwigs = meth_bws, locus = loc, gene_annotation = gencode_annotation, exons = T)
+
+ggsave("figures/OE19_GP5d_ADAR_1st_exon_nanome_methylation_coverage.pdf", height = 10, width = 8)
+```
+
+```{r}
+loc <- GRanges("chr1:154608186-154608186") |> resize(width = 10000, fix = "center") # 10kb region over the ADAR promoter
+plot_single_region(bigwigs = meth_bws, locus = loc, gene_annotation = gencode_annotation, exons = T)
+
+ggsave("figures/OE19_GP5d_ADAR_2nd_exon_nanome_methylation_coverage.pdf", height = 10, width = 8)
+```
+
+#### Plotting histone modifications for the same regions:
+
+```{r}
+# list.files("/data/dpatel/GP5D/ChIP_seq/BW_for_WT_DNMTi_HDACi", full.names = T, pattern = ".bw", recursive = T)
+
+epig_bws <- c(
+  "GP5d_WT_H3K27ac" = "/data/dpatel/GP5D/ChIP_seq/BW_for_WT_DNMTi_HDACi/GP5d_Rep1/GP5D_H3K27ac_final_RPKM_normalized.bw",
+  "GP5d_DNMTi_HDACi_H3K27ac" = "/data/dpatel/GP5D/ChIP_seq/BW_for_WT_DNMTi_HDACi/GP5d_Rep1/GP5d_DNMTi_HDACi_H3K27ac_final_RPKM_normalized.bw",
+  "GP5d_WT_H3K4me3" = "/data/dpatel/GP5D/ChIP_seq/BW_for_WT_DNMTi_HDACi/GP5d_Rep1/GP5D_H3K4me3_final_RPKM_normalized.bw",
+  "GP5d_DNMTi_HDACi_H3K4me3" = "/data/dpatel/GP5D/ChIP_seq/BW_for_WT_DNMTi_HDACi/GP5d_Rep1/GP5d_DNMTi_HDACi_H3K4me3_final_RPKM_normalized.bw",
+  "OE19_WT_H3K27ac" = "/data/dpatel/GP5D/ChIP_seq/BW_for_WT_DNMTi_HDACi/OE19_Rep1/OE19_H3K27ac_final_RPKM_normalized.bw",
+  "OE19_DNMTi_HDACi_H3K27ac" = "/data/dpatel/GP5D/ChIP_seq/BW_for_WT_DNMTi_HDACi/OE19_Rep1/OE19_DNMTi_HDACi_H3K27ac_final_RPKM_normalized.bw",
+  "OE19_WT_H3K4me3" = "/data/dpatel/GP5D/ChIP_seq/BW_for_WT_DNMTi_HDACi/OE19_Rep1/OE19_H3K4me3_final_RPKM_normalized.bw",
+  "OE19_DNMTi_HDACi_H3K4me3" = "/data/dpatel/GP5D/ChIP_seq/BW_for_WT_DNMTi_HDACi/OE19_Rep1/OE19_DNMTi_HDACi_H3K4me3_final_RPKM_normalized.bw"
+  # "GP5d_WT_CpG" = "/data/kzkarttu/nanopore/GP5D/methylation/methylation_calls.GP5D.raw.cpg.mfreq.bw",
+  #"GP5d_DNMTi_HDACi_CpG" = "/data/kzkarttu/raw_data/GP5d_DNMTi_HDACi/NaNOMe-seq/methylation/bedgraph/GP5d_DNMTi_HDACi_bedMethyl_no_GCG.bw",
+  #"OE19_WT_CpG" = "/data/kzkarttu/nanopore/OE19/methylation/methylation_calls.OE19.raw.cpg.mfreq.bw",
+  #"OE19_DNMTi_HDACi_CpG" = "/data/kzkarttu/raw_data/OE19_DNMTi_HDACi/NaNOMe-seq/bedgraphs/OE19_DNMTi_HDACi_CpG_bedMethyl.bw"
+)
+```
+
+```{r}
+loc <- GRanges("chr1:154627997-154627997") |> resize(width = 10000, fix = "center") # 10kb region over the ADAR promoter
+plot_single_region(bigwigs = epig_bws, locus = loc, gene_annotation = "/data/kzkarttu/gradu/annotations/genes/gencode.v36.annotation.sorted.gtf.gz", exons = T)
+
+ggsave("figures/OE19_GP5d_ADAR_1st_exon_histone_coverage.pdf", height = 12, width = 10)
+```
+
+
+```{r}
+loc <- GRanges("chr1:154608186-154608186") |> resize(width = 10000, fix = "center") # 10kb region over the ADAR promoter
+plot_single_region(bigwigs = epig_bws, locus = loc, gene_annotation = "/data/kzkarttu/gradu/annotations/genes/gencode.v36.annotation.sorted.gtf.gz", exons = T)
+
+ggsave("figures/OE19_GP5d_ADAR_2nd_exon_histone_coverage.pdf", height = 12, width = 10)
+```
+
+
+```{r}
+loc <- GRanges("chr1:154581089-154634588")
+plot_single_region(bigwigs = epig_bws, locus = loc, gene_annotation = "/data/kzkarttu/gradu/annotations/genes/gencode.v36.annotation.sorted.gtf.gz", exons = T)
+
+ggsave("figures/OE19_GP5d_ADAR_whole_gene_histone_coverage.pdf", height = 12, width = 10)
+```

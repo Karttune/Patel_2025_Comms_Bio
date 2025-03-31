@@ -42,9 +42,10 @@ Tabulate methylation per each LTR12C locus in GP5d WT and GP5d DNMTi+HDACi.
 ltr12c_meth_list <- getMeth(gp5d_meth_comb_smooth, regions = GRanges(ltr12c_loci), type = "smooth")
 
 ltr12c_meth_all <- bind_rows(lapply(1:nrow(ltr12c_loci), function(i) {
-  bind_cols(ltr12c_loci[i, ], as_tibble(ltr12c_meth[[i]]) %>%
+  bind_cols(ltr12c_loci[i, ], as_tibble(ltr12c_meth_list[[i]]) %>%
     dplyr::rename(GP5d_WT = V1, GP5d_inh = V2))
 }))
+
 ```
 
 ```{r plot_methylation_data}
@@ -231,6 +232,20 @@ gp5d_meth_comb_compare %>%
       adjusted.pval <= 0.05 & meandiff < 0 ~ "Significant (-)",
       .default = "Insignificant"
     )
+  ) |> 
+  select(meandiff, adjusted.pval, sig, lab) |> 
+  mutate(neglog10_adjusted.pval = -log10(adjusted.pval)) |> 
+  distinct() |> 
+    write_tsv("data/source/Fig_4f_source_data.tsv")
+
+gp5d_meth_comb_compare %>%
+  mutate(
+    lab = if_else(meandiff < -0.45, paste0(chr, ":", start, "-", end), NA),
+    sig = case_when(
+      adjusted.pval <= 0.05 & meandiff > 0 ~ "Significant (+)",
+      adjusted.pval <= 0.05 & meandiff < 0 ~ "Significant (-)",
+      .default = "Insignificant"
+    )
   ) %>%
   ggplot(aes(x = meandiff, y = -log10(adjusted.pval), color = sig, label = lab)) +
   geom_point() +
@@ -272,7 +287,7 @@ gp5d_meth_comb_compare %>%
 #### Same plot as above but for all downregulated TE subfamilies in GP5d DNMTi + HDACi.
 
 ```{r plot_boxplot_all_down, fig.width=4, fig.height=5}
-GP5d_inh_all_down <- read_tsv("data/TEs/GP5d_DNMTi_HDACi_Downregulated.bed", col_names = c(bed_colnames[1:4], "family", "class"))
+GP5d_inh_all_down <- read_tsv("data/TEs/GP5d_DNMTi_HDACi_Downregulated.bed", col_names = c("seqnames", "start", "end", "name", "family", "class"))
 
 gp5d_meth_comb_compare_all_down <- compareRegions(gp5d_meth_comb_smooth, 1, 2, GRanges(GP5d_inh_all_down))
 
@@ -298,8 +313,8 @@ gp5d_meth_comb_compare_all_down %>%
 #### Same plot as above but for all UPregulated TE subfamilies in GP5d DNMTi + HDACi.
 
 ```{r plot_boxplot_all_up, fig.width=4, fig.height=5}
-GP5d_inh_all_up <- read_tsv("data/TEs/GP5d_DNMTi_HDACi_Upregulated.bed", col_names = c(bed_colnames[1:4], "family", "class"))
-gp5d_meth_comb_compare_all_up <- compareRegions(gp5d_meth_comb_smooth, 1, 2, GRanges(GP5d_inh_all_up))
+gp5d_inh_all_up <- read_tsv("data/TEs/GP5d_DNMTi_HDACi_Upregulated.bed", col_names = c("seqnames", "start", "end", "name", "family", "class"))
+gp5d_meth_comb_compare_all_up <- compareRegions(gp5d_meth_comb_smooth, 1, 2, GRanges(gp5d_inh_all_up))
 
 gp5d_meth_comb_compare_all_up %>%
   pivot_longer(cols = c(average_one, average_two)) %>%
@@ -324,6 +339,15 @@ gp5d_meth_comb_compare_all_up %>%
 
 ```{r plot_xy_by_TE_class, fig.width=6, fig.height=4.5}
 xy_colors <- c("#003049", "#D62828", "#F77F00", "#FCBF49", "gray40")
+
+gp5d_meth_comb_compare_all_up  %>% 
+  mutate(id = paste0(chr, ":", start, "-", end)) %>% 
+  left_join(., GP5d_inh_all_up %>% mutate(id = paste0(seqnames, ":", start, "-", end)) %>% dplyr::select(-seqnames, -start, -end), by = "id") %>% 
+  mutate(clr = if_else(adjusted.pval <= 0.05, class, "Insignificant"),
+         clr = factor(clr, levels = c("LINE", "SINE", "LTR", "DNA", "Insignificant")),
+         sz = factor(if_else(clr != "Insignificant", 1, 2))) |> 
+  select(average_one, average_two, clr, class, sz) |> 
+  write_tsv("data/source/Supp_fig_8a_source_data.tsv")
 
 gp5d_meth_comb_compare_all_up  %>% 
   mutate(id = paste0(chr, ":", start, "-", end)) %>% 

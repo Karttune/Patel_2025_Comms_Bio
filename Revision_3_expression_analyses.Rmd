@@ -6,6 +6,7 @@ editor_options:
 
 ```{r}
 library(tidyverse)
+library(GenomicRanges)
 library(ggpubr)
 library(ggrepel)
 library(RColorBrewer)
@@ -32,8 +33,8 @@ bind_rows(res, .id = "line") |>
   ) |>
   left_join(p53_pred, by = c("subfamily" = "LTR/ERV")) |>
   filter(!is.na(Percentage)) |>
-  group_by(line, subfamily) |>
-  summarize(l2fc = mean(log2FoldChange), perc = first(Percentage)) |>
+  group_by(line, subfamily) |> 
+  summarize(l2fc = mean(log2FoldChange), perc = mean(Percentage)) |> 
   ggplot(aes(x = l2fc, y = perc)) +
   facet_wrap(~line) +
   geom_point() +
@@ -59,7 +60,6 @@ bind_rows(res, .id = "line") |>
   geom_point(shape = 21) +
   geom_text_repel() +
   ggpubr::stat_cor()
-
 
 # ggsave("/data/kzkarttu/projects/Patel_2024_revision/figures/241126_TE_expression_p53_percentage_cor_scatterplot.pdf", width = 8, height = 5)
 ```
@@ -114,7 +114,7 @@ rmsk_seq_line <- as.character(rmsk_seq[rmsk_seq_ids$class == "LINE", ])
 
 p53re_res_line <- read_tsv("data/p53retriever/241210_rmsk_p53retriever_res.tsv.gz")
 
-p53re_res_line_out <- lapply(seq_along(res), function(i) {
+p53re_res_line_out <- lapply(seq_along(res), function(i) { # Joining p53retriever results for LINEs with expression data
   p53re_res_line |>
     right_join(tibble(te = names(rmsk_seq_line)), by = "te") |>
     left_join(rmsk_seq_ids, by = c("te" = "fa_id")) |>
@@ -137,12 +137,30 @@ p53re_res_line_out <- lapply(seq_along(res), function(i) {
     summarize(grades = max(grades), l2fc = max(l2fc), padj = max(padj), sig = unique(sig))
 })
 
+# test <- bind_rows(lapply(1:3, function(i) {
+#   p53re_res_line_out[[i]] |> 
+#     mutate(sig = if_else(l2fc > 1 & padj < 0.05, "sig_up", if_else(l2fc < -1 & padj < 0.05, "sig_down", "insig")),
+#            id = names(res)[i]) |> 
+#     group_by(sig, grades) |> 
+#     summarize(n = n(), id = unique(id))
+# }))
+# 
+# test |> 
+#   pivot_wider(names_from = grades, values_from = n)
+
+bind_rows(p53re_res_line_out, .id = "cell_line") |> 
+  mutate(cell_line = case_when(cell_line == 1~"GP5d_C2_DNMTi_HDACi",
+                               cell_line == 2~"GP5d_WT_DNMTi_HDACi",
+                               cell_line == 3~"OE19_DNMTi_HDACi")) #|> 
+  # write_tsv("data/source/Fig_3f_LINE_source_data.tsv")
+
 path <- paste0("figures/", dt(), "_GP5d_WT_C2_OE19_DNMTi_HDACi_p53RE_grades_LINE_expression_boxplots.pdf")
 pdf(path, width = 6, height = 4)
 for (i in 1:3) {
   p <- ggplot(p53re_res_line_out[[i]], aes(x = factor(grades), y = l2fc)) +
     # geom_boxplot(alpha = .5, outlier.shape = NA) +
-    geom_jitter(aes(color = sig, size = sig), alpha = .5) +
+    # geom_jitter(aes(color = sig, size = sig), alpha = .5) +
+    ggrastr::geom_jitter_rast(aes(color = sig, size = sig), alpha = .5) + # A lot of points going on here so rasterizing the output
     geom_boxplot(alpha = .25, outlier.shape = NA) +
     geom_hline(yintercept = 0, color = "gray40", linetype = "dashed") +
     scale_size_manual(values = c(.75, .1)) +
@@ -150,11 +168,12 @@ for (i in 1:3) {
     labs(title = paste0("LINEs, ", names(res[i])))
 
   if (i == 2) {
-    print(p + stat_compare_means(comparisons = list(c("0", "1"), c("0", "2"), c("0", "3"), c("0", "4")), method.args = list(alternative = "less")))
+    print(p + ggpubr::stat_compare_means(comparisons = list(c("0", "1"), c("0", "2"), c("0", "3"), c("0", "4")), method.args = list(alternative = "less")))
   } else {
-    print(p + stat_compare_means(comparisons = list(c("0", "1"), c("0", "2"), c("0", "3"), c("0", "4"), c("0", "5")), method.args = list(alternative = "less")))
+    print(p + ggpubr::stat_compare_means(comparisons = list(c("0", "1"), c("0", "2"), c("0", "3"), c("0", "4"), c("0", "5")), method.args = list(alternative = "less")))
   }
 }
+
 dev.off()
 # ggsave("figures/GP5d_C2_DNMTi_HDACi_p53RE_grades_LINE_expression_boxplot.pdf", width = 6, height = 5)
 ```
@@ -165,6 +184,8 @@ rmsk_seq_ltr <- rmsk_seq[na.omit(rmsk_seq_ids$class == "LTR"), ]
 # p53re_res_ltr <- mcMap(p53sf, as.character(rmsk_seq_ltr), mc.cores = 40)
 # p53re_res_ltr <- bind_rows(p53re_res_ltr, .id = "te")
 # write_tsv(bind_rows(p53re_res_ltr, .id = "te"), "data/p53retriever/241212_rmsk_LTR_p53retriever_res.tsv.gz")
+
+p53re_res_ltr <- read_tsv("data/p53retriever/241212_rmsk_LTR_p53retriever_res.tsv.gz")
 
 p53re_res_ltr_out <- lapply(seq_along(res), function(i) {
   p53re_res_ltr |>
@@ -189,12 +210,31 @@ p53re_res_ltr_out <- lapply(seq_along(res), function(i) {
     summarize(grades = max(grades), l2fc = max(l2fc), padj = max(padj), sig = unique(sig))
 })
 
+# test_2 <- bind_rows(lapply(1:3, function(i) {
+#   p53re_res_ltr_out[[i]] |> 
+#     mutate(sig = if_else(l2fc > 1 & padj < 0.05, "sig_up", if_else(l2fc < -1 & padj < 0.05, "sig_down", "insig")),
+#            id = names(res)[i]) |> 
+#     group_by(sig, grades) |> 
+#     summarize(n = n(), id = unique(id))
+# }))
+# 
+# test_2 |> 
+#   pivot_wider(names_from = grades, values_from = n)
+
+bind_rows(p53re_res_ltr_out, .id = "cell_line") |> 
+  mutate(cell_line = case_when(cell_line == 1~"GP5d_C2_DNMTi_HDACi",
+                               cell_line == 2~"GP5d_WT_DNMTi_HDACi",
+                               cell_line == 3~"OE19_DNMTi_HDACi")) #|> 
+  # write_tsv("data/source/Fig_3f_LTR_source_data.tsv")
+
+
 path <- paste0("figures/", dt(), "_GP5d_WT_C2_OE19_DNMTi_HDACi_p53RE_grades_LTR_expression_boxplots.pdf")
 pdf(path, width = 6, height = 4)
 for (i in 1:3) {
   p <- ggplot(p53re_res_ltr_out[[i]], aes(x = factor(grades), y = l2fc)) +
     # geom_boxplot(alpha = .5, outlier.shape = NA) +
-    geom_jitter(aes(color = sig, size = sig), alpha = .5) +
+    # geom_jitter(aes(color = sig, size = sig), alpha = .5) +
+    ggrastr::geom_jitter_rast(aes(color = sig, size = sig), alpha = .5) +
     geom_boxplot(alpha = .25, outlier.shape = NA) +
     geom_hline(yintercept = 0, color = "gray40", linetype = "dashed") +
     scale_size_manual(values = c(.75, .1)) +
